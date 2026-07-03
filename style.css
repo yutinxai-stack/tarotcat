@@ -1196,6 +1196,18 @@ footer {
   color: #a29bfe;
 }
 
+.role-badge.cat {
+  background: rgba(162, 155, 254, 0.15);
+  border: 1px solid #a29bfe;
+  color: #a29bfe;
+}
+
+.role-badge.dog {
+  background: rgba(240, 147, 43, 0.15);
+  border: 1px solid #f0932b;
+  color: #ffbe76;
+}
+
 .btn-action-delete {
   background: rgba(231, 76, 60, 0.15);
   border: 1px solid #e74c3c;

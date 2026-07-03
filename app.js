@@ -1069,12 +1069,12 @@ function saveDivinationRecord() {
   }).join(" | ");
 
   // 3. 建立一筆歷史紀錄
-  const themeLabel = currentTheme === "dog" ? "狗狗" : "貓貓";
   const record = {
     id: Date.now(),
     username: currentUser ? currentUser.username : "訪客",
     dateTime: dateStr,
-    spreadName: `[${themeLabel}] ${selectedSpread.title}`,
+    theme: currentTheme === "dog" ? "狗狗 🐶" : "貓貓 🐱",
+    spreadName: selectedSpread.title,
     cardsInfo: cardsInfo
   };
 
@@ -1092,7 +1092,7 @@ function renderAdminHistory() {
   tbody.innerHTML = "";
 
   if (history.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">目前尚無任何占卜歷史歷史紀錄。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">目前尚無任何占卜歷史歷史紀錄。</td></tr>`;
     return;
   }
 
@@ -1107,10 +1107,21 @@ function renderAdminHistory() {
       return `<span class="history-cards-info"><strong>${slot}</strong>: ${card}</span>`;
     }).join("<br>");
 
+    // 相容舊資料，提取主題與乾淨的牌陣名稱
+    let themeShow = record.theme;
+    let spreadShow = record.spreadName;
+    if (!themeShow) {
+      themeShow = record.spreadName.includes("[狗狗]") ? "狗狗 🐶" : "貓貓 🐱";
+      spreadShow = record.spreadName.replace("[狗狗] ", "").replace("[貓貓] ", "");
+    }
+
+    const themeClass = themeShow.includes("狗") ? "dog" : "cat";
+
     tr.innerHTML = `
       <td>${record.dateTime}</td>
       <td><strong>${record.username}</strong></td>
-      <td><span class="role-badge user">${record.spreadName}</span></td>
+      <td><span class="role-badge ${themeClass}">${themeShow}</span></td>
+      <td><span class="role-badge user">${spreadShow}</span></td>
       <td><div style="text-align:left; font-size:0.85rem; line-height:1.4;">${formattedCards}</div></td>
       <td><button class="btn-action-delete" onclick="deleteHistoryRecord(${record.id})"><i class="fa-solid fa-trash-can"></i> 刪除</button></td>
     `;
@@ -1136,14 +1147,25 @@ function exportHistoryToExcel() {
     return;
   }
 
-  // 1. 定義 CSV 標頭
-  let csvContent = "占卜時間,抽牌使用者,使用牌陣,抽出的牌卡與位置定義\r\n";
+  // 1. 定義 CSV 標頭 (新增占卜主題)
+  let csvContent = "占卜時間,抽牌使用者,占卜主題,使用牌陣,抽出的牌卡與位置定義\r\n";
 
   // 2. 填充資料行 (CSV 需要處理逗號換行雙引號)
   history.forEach(r => {
+    // 相容舊資料，提取主題與乾淨的牌陣名稱
+    let themeShow = r.theme;
+    let spreadShow = r.spreadName;
+    if (!themeShow) {
+      themeShow = r.spreadName.includes("[狗狗]") ? "狗狗" : "貓貓";
+      spreadShow = r.spreadName.replace("[狗狗] ", "").replace("[貓貓] ", "");
+    } else {
+      // 去除 Emoji 便於 CSV 編輯
+      themeShow = themeShow.replace(" 🐶", "").replace(" 🐱", "");
+    }
+
     // 對卡牌字串進行 escape 以防 CSV 崩壞
     const escapedCardsInfo = `"${r.cardsInfo.replace(/"/g, '""')}"`;
-    const row = `${r.dateTime},${r.username},${r.spreadName},${escapedCardsInfo}\r\n`;
+    const row = `${r.dateTime},${r.username},${themeShow},${spreadShow},${escapedCardsInfo}\r\n`;
     csvContent += row;
   });
 
