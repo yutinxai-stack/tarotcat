@@ -331,6 +331,13 @@ function resetTable() {
   spreadContainer.innerHTML = "";
   deckContainer.innerHTML = "";
 
+  // 移除所有殘留在 tabletop 上的卡牌 DOM，避免新一局出現舊牌
+  const tabletop = document.querySelector(".tabletop");
+  if (tabletop) {
+    const activeCards = tabletop.querySelectorAll(".tarot-card");
+    activeCards.forEach(card => card.remove());
+  }
+
   // 1. 生成牌陣卡槽 Slots
   selectedSpread.slots.forEach((slot, index) => {
     const slotEl = document.createElement("div");
