@@ -623,7 +623,7 @@ function drawCard(cardEl, fanIndex) {
 
   // 載入對應主題資料夾下的圖片 (狗狗主題使用 card_索引.png 映射)
   const imgUrl = currentTheme === "dog" 
-    ? `imagesdog/card_${allCards.indexOf(cardData)}.png` 
+    ? `imagesdog/card_${allCards.findIndex(c => c.filename === cardData.filename)}.png` 
     : `images/${cardData.filename}`;
   frontEl.innerHTML = `<img src="${imgUrl}" alt="${cardData.name}">`;
   innerEl.appendChild(frontEl);
@@ -735,7 +735,7 @@ function openCardDetail(cardData, slotIndex) {
 
   // 設定卡片基本資訊
   modalImg.src = currentTheme === "dog" 
-    ? `imagesdog/card_${allCards.indexOf(cardData)}.png` 
+    ? `imagesdog/card_${allCards.findIndex(c => c.filename === cardData.filename)}.png` 
     : `images/${cardData.filename}`;
   positionText.textContent = `${selectedSpread.slots[slotIndex].name}`;
   
