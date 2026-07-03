@@ -1252,3 +1252,183 @@ footer {
     font-size: 1.4rem;
   }
 }
+
+/* --------------------------------------------------
+   0. 主題選擇首頁 (#theme-selector-section) 樣式
+   -------------------------------------------------- */
+#theme-selector-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.theme-title-area {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.theme-title-paw {
+  font-size: 3rem;
+  color: var(--gold-primary);
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+}
+
+.theme-main-title {
+  font-family: var(--font-title);
+  font-size: 2.8rem;
+  color: var(--gold-primary);
+  letter-spacing: 4px;
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+  margin: 0;
+}
+
+.theme-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-top: 10px;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+}
+
+.theme-choice-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 40px 30px;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.theme-choice-card:hover {
+  background: rgba(212, 175, 55, 0.05);
+  border-color: var(--gold-primary);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.choice-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  transition: transform 0.3s;
+}
+
+.theme-choice-card:hover .choice-icon {
+  transform: scale(1.1);
+}
+
+.cat-choice .choice-icon {
+  color: #a29bfe;
+}
+
+.dog-choice .choice-icon {
+  color: #f0932b;
+}
+
+.theme-choice-card h2 {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.theme-choice-card p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 25px;
+  height: 60px; /* 固定高度便於對齊 */
+}
+
+.btn-theme-enter {
+  padding: 10px 24px !important;
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------
+   狗狗主題 (Dog Theme) 樣式覆蓋
+   -------------------------------------------------- */
+body.dog-theme {
+  --bg-color: #f5edd6;
+  --bg-gradient: linear-gradient(135deg, #fbf7ed 0%, #e7d8b8 100%);
+  --text-dark: #5c4327;
+  --text-dark-secondary: #7e5a32;
+  --gold-primary: #e09015; /* 改為溫暖的陽光橘黃 */
+  --gold-hover: #f1b34c;
+  --gold-glow: rgba(224, 144, 21, 0.35);
+  --panel-border: rgba(126, 90, 50, 0.25);
+}
+
+/* 狗狗重複 SVG 星座背景圖騰 */
+body.dog-theme .stars-container {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><path d='M 35 45 C 35 38, 40 35, 50 35 C 60 35, 65 38, 65 45 C 65 52, 60 58, 50 58 C 40 58, 35 52, 35 45 Z' fill='none' stroke='rgba(126, 90, 50, 0.05)' stroke-width='1.2' /><path d='M 36 38 C 30 38, 25 45, 28 55 C 30 60, 36 50, 36 38 Z' fill='none' stroke='rgba(126, 90, 50, 0.05)' stroke-width='1.2' /><path d='M 64 38 C 70 38, 75 45, 72 55 C 70 60, 64 50, 64 38 Z' fill='none' stroke='rgba(126, 90, 50, 0.05)' stroke-width='1.2' /><path d='M 47 50 L 53 50 L 50 53 Z' fill='rgba(126, 90, 50, 0.07)' /><path d='M 12 75 C 10 73, 10 70, 13 68 C 15 67, 18 69, 18 72 L 28 72 C 28 69, 31 67, 33 68 C 36 70, 36 73, 34 75 C 36 77, 36 80, 33 82 C 31 83, 28 81, 28 78 L 18 78 C 18 81, 15 83, 13 82 C 10 80, 10 77, 12 75 Z' fill='none' stroke='rgba(126, 90, 50, 0.03)' stroke-width='1.2' /></svg>");
+  background-repeat: repeat;
+  opacity: 0.85;
+}
+
+body.dog-theme .nebula-container {
+  background: radial-gradient(circle at 30% 20%, rgba(243, 156, 18, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 70% 80%, rgba(211, 84, 0, 0.05) 0%, transparent 65%);
+}
+
+/* 狗狗卡牌背面設計樣式覆蓋 (金棕黃基調) */
+body.dog-theme .tarot-card-back {
+  background: linear-gradient(135deg, #1c1409 0%, #2b1f10 100%);
+  border-color: rgba(224, 144, 21, 0.45);
+}
+
+body.dog-theme .tarot-card-back::before {
+  border-color: rgba(224, 144, 21, 0.25);
+}
+
+body.dog-theme .tarot-card-back::after {
+  border-color: rgba(224, 144, 21, 0.15);
+}
+
+body.dog-theme .tarot-card-front {
+  background: #1c140c; /* 暗暖色正面背景 */
+}
+
+body.dog-theme .card-slot-label {
+  background: rgba(28, 20, 10, 0.9);
+  border-color: rgba(224, 144, 21, 0.45);
+}
+
+body.dog-theme .orientation-badge.upright {
+  background: rgba(46, 204, 113, 0.18);
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+/* 行動裝置主題選擇 Grid 微調 */
+@media (max-width: 650px) {
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .theme-choice-card p {
+    height: auto;
+    margin-bottom: 20px;
+  }
+}

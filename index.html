@@ -22,24 +22,50 @@
   <nav class="user-navbar">
     <div class="user-status-area">
       <span id="user-welcome-text"><i class="fa-solid fa-cat"></i> 訪客</span>
+      <button id="btn-switch-theme" class="btn-small hidden"><i class="fa-solid fa-paw"></i> 切換主題</button>
       <button id="btn-show-login" class="btn-small"><i class="fa-solid fa-right-to-bracket"></i> 登入 / 註冊</button>
       <button id="btn-go-admin" class="btn-small hidden"><i class="fa-solid fa-toolbox"></i> 管理後台</button>
       <button id="btn-logout" class="btn-small hidden"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
     </div>
   </nav>
 
-  <header>
-    <div class="logo">
-      <i class="fa-solid fa-cat"></i>
-      <h1>TAROTCAT</h1>
-      <span class="sub-title">貓咪神祕塔羅占卜</span>
+  <!-- 0. 主題選擇首頁 (Landing Page) -->
+  <section id="theme-selector-section">
+    <div class="theme-title-area">
+      <i class="fa-solid fa-paw theme-title-paw"></i>
+      <h1 class="theme-main-title">TAROTPET</h1>
+      <p class="theme-subtitle">請選擇你喜愛的神秘寵物主題，開啟命運的啟示</p>
     </div>
-    <p class="intro-desc">在貓咪神秘學的指引下，洗淨雜念、靜心凝神，選擇一個牌陣來指引你的命運。</p>
+    
+    <div class="theme-grid">
+      <div class="theme-choice-card cat-choice" id="choice-cat">
+        <div class="choice-icon"><i class="fa-solid fa-cat"></i></div>
+        <h2>貓咪神秘塔羅</h2>
+        <p>在靈性與優雅的貓咪引導下，探索潛意識的深層奧秘。</p>
+        <button class="btn-primary btn-theme-enter">進入貓貓世界</button>
+      </div>
+
+      <div class="theme-choice-card dog-choice" id="choice-dog">
+        <div class="choice-icon"><i class="fa-solid fa-dog"></i></div>
+        <h2>狗狗溫暖塔羅</h2>
+        <p>藉由忠誠與直覺的狗狗守護，尋求生活與前行的勇氣。</p>
+        <button class="btn-primary btn-theme-enter">進入狗狗世界</button>
+      </div>
+    </div>
+  </section>
+
+  <header class="hidden">
+    <div class="logo">
+      <i class="fa-solid fa-cat" id="logo-icon"></i>
+      <h1 id="logo-title">TAROTCAT</h1>
+      <span class="sub-title" id="logo-subtitle">貓咪神祕塔羅占卜</span>
+    </div>
+    <p class="intro-desc" id="intro-desc-text">在貓咪神秘學的指引下，洗淨雜念、靜心凝神，選擇一個牌陣來指引你的命運。</p>
   </header>
 
   <main>
     <!-- 1. 牌陣選擇區 -->
-    <section id="spread-selector-section">
+    <section id="spread-selector-section" class="hidden">
       <h2 class="section-title">選擇占卜牌陣</h2>
       <div class="spread-grid">
         <!-- 8大牌陣卡片 -->

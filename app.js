@@ -96,6 +96,7 @@ let selectedSpread = null; // 當前選擇的牌陣
 let drawnCards = []; // 目前已抽取的卡牌與對應卡槽資訊
 let isShuffled = false; // 是否已完成洗牌
 let activeDeck = []; // 目前牌堆中的 78 張牌實體資料 (混淆並附帶正逆位資訊)
+let currentTheme = 'cat'; // 當前寵物主題: 'cat' | 'dog'
 
 // 2. 八大牌陣位置與定義
 const spreadsConfig = {
@@ -188,6 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCardData();
   setupEventListeners();
   initAuth(); // 初始化帳戶登入與後台系統
+  initThemeSelector(); // 初始化主題選擇器
 });
 
 // 星光閃爍背景效果
@@ -335,6 +337,11 @@ function setupEventListeners() {
   document.getElementById("btn-export-excel").addEventListener("click", () => {
     exportHistoryToExcel();
   });
+
+  // 切換寵物主題
+  document.getElementById("btn-switch-theme").addEventListener("click", () => {
+    switchThemeBackToLanding();
+  });
 }
 
 // 6. 選擇牌陣與桌布初始化
@@ -410,6 +417,7 @@ function resetTable() {
   });
 
   // 2. 靜態生成 78 張堆疊在牌堆邊的背影卡 (給人尚未洗牌的感受)
+  const backIcon = currentTheme === "dog" ? "fa-dog" : "fa-cat";
   for (let i = 0; i < 40; i++) {
     const cardEl = document.createElement("div");
     cardEl.classList.add("tarot-card");
@@ -420,7 +428,7 @@ function resetTable() {
     cardEl.innerHTML = `
       <div class="tarot-card-inner">
         <div class="tarot-card-back">
-          <i class="fa-solid fa-cat"></i>
+          <i class="fa-solid ${backIcon}"></i>
           <div class="back-pattern"></div>
         </div>
       </div>
@@ -439,6 +447,7 @@ function startShufflingRitual() {
   deckContainer.innerHTML = ""; // 清空
 
   // 1. 生成 78 張帶隨機座標動畫的實體牌，準備播放洗牌動畫
+  const backIcon = currentTheme === "dog" ? "fa-dog" : "fa-cat";
   const tempCards = [];
   for (let i = 0; i < 40; i++) {
     const cardEl = document.createElement("div");
@@ -457,7 +466,7 @@ function startShufflingRitual() {
     cardEl.innerHTML = `
       <div class="tarot-card-inner">
         <div class="tarot-card-back">
-          <i class="fa-solid fa-cat"></i>
+          <i class="fa-solid ${backIcon}"></i>
           <div class="back-pattern"></div>
         </div>
       </div>
@@ -510,7 +519,7 @@ function startShufflingRitual() {
       cardEl.innerHTML = `
         <div class="tarot-card-inner">
           <div class="tarot-card-back">
-            <i class="fa-solid fa-cat"></i>
+            <i class="fa-solid ${backIcon}"></i>
             <div class="back-pattern"></div>
           </div>
         </div>
@@ -612,8 +621,10 @@ function drawCard(cardEl, fanIndex) {
     frontEl.classList.add("reversed");
   }
 
-  // 載入對應 images 資料夾下的圖片
-  const imgUrl = `images/${cardData.filename}`;
+  // 載入對應主題資料夾下的圖片 (狗狗主題使用 card_索引.png 映射)
+  const imgUrl = currentTheme === "dog" 
+    ? `imagesdog/card_${allCards.indexOf(cardData)}.png` 
+    : `images/${cardData.filename}`;
   frontEl.innerHTML = `<img src="${imgUrl}" alt="${cardData.name}">`;
   innerEl.appendChild(frontEl);
 
@@ -723,9 +734,15 @@ function openCardDetail(cardData, slotIndex) {
   const descText = document.getElementById("modal-card-description");
 
   // 設定卡片基本資訊
-  modalImg.src = `images/${cardData.filename}`;
+  modalImg.src = currentTheme === "dog" 
+    ? `imagesdog/card_${allCards.indexOf(cardData)}.png` 
+    : `images/${cardData.filename}`;
   positionText.textContent = `${selectedSpread.slots[slotIndex].name}`;
-  titleText.textContent = `${cardData.name} (${cardData.filename.replace("_MeowsticTarot.png", "").replace(/_/g, " ")})`;
+  
+  const engName = currentTheme === "dog" 
+    ? "Dog Tarot" 
+    : cardData.filename.replace("_MeowsticTarot.png", "").replace(/_/g, " ");
+  titleText.textContent = `${cardData.name} (${engName})`;
 
   // 設定正逆位
   const isReversed = cardData.isReversed;
@@ -1044,11 +1061,12 @@ function saveDivinationRecord() {
   }).join(" | ");
 
   // 3. 建立一筆歷史紀錄
+  const themeLabel = currentTheme === "dog" ? "狗狗" : "貓貓";
   const record = {
     id: Date.now(),
     username: currentUser ? currentUser.username : "訪客",
     dateTime: dateStr,
-    spreadName: selectedSpread.title,
+    spreadName: `[${themeLabel}] ${selectedSpread.title}`,
     cardsInfo: cardsInfo
   };
 
@@ -1137,5 +1155,74 @@ function exportHistoryToExcel() {
   document.body.removeChild(link);
 
   console.log("占卜歷史歷史紀錄成功導出 Excel CSV！");
+}
+
+// --------------------------------------------------
+// 14. 寵物主題選擇核心邏輯 (Cat / Dog Themes)
+// --------------------------------------------------
+function initThemeSelector() {
+  document.getElementById("choice-cat").addEventListener("click", () => {
+    selectTheme("cat");
+  });
+
+  document.getElementById("choice-dog").addEventListener("click", () => {
+    selectTheme("dog");
+  });
+}
+
+function selectTheme(themeKey) {
+  currentTheme = themeKey;
+
+  const logoIcon = document.getElementById("logo-icon");
+  const logoTitle = document.getElementById("logo-title");
+  const logoSubtitle = document.getElementById("logo-subtitle");
+  const introDescText = document.getElementById("intro-desc-text");
+  const btnSwitchTheme = document.getElementById("btn-switch-theme");
+
+  if (currentTheme === "dog") {
+    document.body.classList.add("dog-theme");
+    
+    // 更新 LOGO 與引導語為狗狗
+    logoIcon.className = "fa-solid fa-dog";
+    logoTitle.textContent = "TAROTDOG";
+    logoSubtitle.textContent = "狗狗溫暖塔羅占卜";
+    introDescText.textContent = "在忠實狗狗的神聖守護下，洗淨雜念、靜心凝神，選擇一個牌陣來指引你的命運。";
+  } else {
+    document.body.classList.remove("dog-theme");
+    
+    // 更新 LOGO 與引導語為貓貓
+    logoIcon.className = "fa-solid fa-cat";
+    logoTitle.textContent = "TAROTCAT";
+    logoSubtitle.textContent = "貓咪神祕塔羅占卜";
+    introDescText.textContent = "在貓咪神秘學的指引下，洗淨雜念、靜心凝神，選擇一個牌陣來指引你的命運。";
+  }
+
+  // 切換畫面顯隱
+  document.getElementById("theme-selector-section").classList.add("hidden");
+  document.querySelector("header").classList.remove("hidden");
+  document.getElementById("spread-selector-section").classList.remove("hidden");
+  
+  // 顯示頂部的「切換主題」按鈕
+  btnSwitchTheme.classList.remove("hidden");
+  
+  // 依據當前主題，重置並重新渲染未洗牌狀態的背面卡牌 (為了正確載入貓/狗背面 icon)
+  resetTable();
+}
+
+function switchThemeBackToLanding() {
+  // 重置占卜桌布
+  resetTable();
+
+  // 隱藏占卜桌面與牌陣選擇
+  document.querySelector("header").classList.add("hidden");
+  document.getElementById("spread-selector-section").classList.add("hidden");
+  document.getElementById("tabletop-section").classList.add("hidden");
+  document.getElementById("admin-panel-section").classList.add("hidden");
+
+  // 顯示主題選擇首頁
+  document.getElementById("theme-selector-section").classList.remove("hidden");
+  
+  // 隱藏頂部「切換主題」按鈕本身
+  document.getElementById("btn-switch-theme").classList.add("hidden");
 }
 
