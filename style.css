@@ -622,6 +622,12 @@ button {
   z-index: 100 !important;
 }
 
+/* 已抽取的卡牌在桌面上 Hover 時浮上來，解決被其它卡牌重疊壓住無法點擊的問題 */
+.tabletop > .tarot-card:hover {
+  z-index: 500 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
 /* --------------------------------------------------
    洗牌動畫特效 (Shuffling CSS Classes)
    -------------------------------------------------- */

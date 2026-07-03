@@ -168,8 +168,8 @@ const spreadsConfig = {
   "celtic-cross": {
     title: "凱爾特十字",
     slots: [
-      { name: "位置 1：現狀與核心處境", x: 40, y: 50 },
-      { name: "位置 2：遭遇的阻礙或助力", x: 42, y: 44 }, // 稍往右上方偏以顯示
+      { name: "位置 1：現狀與核心處境", x: 38, y: 50 },
+      { name: "位置 2：遭遇的阻礙或助力", x: 44, y: 50 }, // 稍往右上方偏以顯示
       { name: "位置 3：目標與潛意識願望", x: 40, y: 10 },
       { name: "位置 4：根基與潛意識狀態", x: 40, y: 90 },
       { name: "位置 5：逝去的過去影響", x: 20, y: 50 },
@@ -639,10 +639,29 @@ function drawCard(cardEl, fanIndex) {
   // 6. 卡片飛入定位後 (650ms) 啟用點擊事件，進行 3D 翻轉翻牌或打開 Lightbox
   setTimeout(() => {
     newCardEl.style.pointerEvents = "auto";
+    
+    // 凱爾特十字位置 2 特殊穿透：若底層的位置 1 尚未翻開，則位置 2 暫時禁點 (穿透到底下位置 1)
+    if (selectedSpread.title === "凱爾特十字" && targetSlotIndex === 1) {
+      const card1Obj = drawnCards[0];
+      if (card1Obj && card1Obj.element && !card1Obj.element.classList.contains("flipped")) {
+        newCardEl.style.pointerEvents = "none";
+        newCardEl.style.opacity = "0.95";
+      }
+    }
+
     newCardEl.addEventListener("click", () => {
       if (!newCardEl.classList.contains("flipped")) {
         newCardEl.classList.add("flipped");
         updatePrompt(`點選已翻開的「${cardData.name}」可查看詳細解牌義。`);
+        
+        // 凱爾特十字位置 1 被翻開時，解鎖上面的位置 2，使其可點擊
+        if (selectedSpread.title === "凱爾特十字" && targetSlotIndex === 0) {
+          const card2Obj = drawnCards[1];
+          if (card2Obj && card2Obj.element) {
+            card2Obj.element.style.pointerEvents = "auto";
+            card2Obj.element.style.opacity = "1";
+          }
+        }
         
         // 檢測是否所有抽取的卡牌皆已翻開
         const totalSlots = selectedSpread.slots.length;
