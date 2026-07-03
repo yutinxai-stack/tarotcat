@@ -187,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initStars();
   loadCardData();
   setupEventListeners();
+  initAuth(); // 初始化帳戶登入與後台系統
 });
 
 // 星光閃爍背景效果
@@ -284,7 +285,55 @@ function setupEventListeners() {
 
   // 按 Esc 鍵關閉 Modal
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+    if (e.key === "Escape") {
+      closeModal();
+      closeAuthModal();
+    }
+  });
+
+  // 帳戶登入與後台管理事件
+  document.getElementById("btn-show-login").addEventListener("click", () => {
+    openAuthModal();
+  });
+  
+  document.getElementById("btn-close-auth-modal").addEventListener("click", () => {
+    closeAuthModal();
+  });
+  
+  document.getElementById("link-switch-auth").addEventListener("click", (e) => {
+    e.preventDefault();
+    switchAuthMode();
+  });
+  
+  document.getElementById("auth-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleAuthSubmit();
+  });
+  
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    handleLogout();
+  });
+
+  document.getElementById("btn-go-admin").addEventListener("click", () => {
+    openAdminPanel();
+  });
+
+  document.getElementById("btn-close-admin").addEventListener("click", () => {
+    closeAdminPanel();
+  });
+
+  // 後台 Tab 切換
+  const tabButtons = document.querySelectorAll(".admin-tab-btn");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.getAttribute("data-tab");
+      switchAdminTab(tabId);
+    });
+  });
+
+  // 匯出 Excel (CSV)
+  document.getElementById("btn-export-excel").addEventListener("click", () => {
+    exportHistoryToExcel();
   });
 }
 
@@ -594,6 +643,13 @@ function drawCard(cardEl, fanIndex) {
       if (!newCardEl.classList.contains("flipped")) {
         newCardEl.classList.add("flipped");
         updatePrompt(`點選已翻開的「${cardData.name}」可查看詳細解牌義。`);
+        
+        // 檢測是否所有抽取的卡牌皆已翻開
+        const totalSlots = selectedSpread.slots.length;
+        const flippedCardsCount = document.querySelectorAll(".tabletop .tarot-card.flipped").length;
+        if (flippedCardsCount === totalSlots) {
+          saveDivinationRecord(); // 自動將占卜歷史儲存至 LocalStorage
+        }
       } else {
         openCardDetail(cardData, targetSlotIndex);
       }
@@ -686,3 +742,381 @@ function updatePrompt(text) {
 function showNotification(title, text) {
   alert(`${title}\n${text}`);
 }
+
+// --------------------------------------------------
+// 13. 帳戶登入與管理後台核心邏輯
+// --------------------------------------------------
+let currentUser = null; // 當前登入的用戶資訊
+let isRegisterMode = false; // 是否處於註冊模式
+
+// 初始化帳戶與歷史紀錄資料庫
+function initAuth() {
+  // 1. 初始化使用者列表
+  if (!localStorage.getItem("tarot_users")) {
+    const defaultUsers = [
+      { username: "admin", password: "admin123", role: "admin" }
+    ];
+    localStorage.setItem("tarot_users", JSON.stringify(defaultUsers));
+  }
+
+  // 2. 初始化歷史紀錄列表
+  if (!localStorage.getItem("tarot_history")) {
+    localStorage.setItem("tarot_history", JSON.stringify([]));
+  }
+
+  // 3. 讀取 Session 登入狀態
+  const savedUser = sessionStorage.getItem("tarot_current_user");
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+  }
+
+  updateAuthUI();
+}
+
+// 開啟登入彈窗
+function openAuthModal() {
+  isRegisterMode = false;
+  document.getElementById("auth-modal-title").textContent = "登入占卜帳戶";
+  document.getElementById("btn-auth-submit").textContent = "立即登入";
+  document.getElementById("auth-switch-text").textContent = "還沒有帳戶？";
+  document.getElementById("link-switch-auth").textContent = "立即註冊";
+  document.getElementById("auth-form").reset();
+  
+  document.getElementById("login-modal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+// 關閉登入彈窗
+function closeAuthModal() {
+  document.getElementById("login-modal").classList.add("hidden");
+  if (!document.getElementById("card-modal").classList.contains("hidden")) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+}
+
+// 切換登入與註冊模式
+function switchAuthMode() {
+  isRegisterMode = !isRegisterMode;
+  const title = document.getElementById("auth-modal-title");
+  const submitBtn = document.getElementById("btn-auth-submit");
+  const switchText = document.getElementById("auth-switch-text");
+  const switchLink = document.getElementById("link-switch-auth");
+
+  if (isRegisterMode) {
+    title.textContent = "註冊占卜帳戶";
+    submitBtn.textContent = "立即註冊";
+    switchText.textContent = "已有帳戶？";
+    switchLink.textContent = "立即登入";
+  } else {
+    title.textContent = "登入占卜帳戶";
+    submitBtn.textContent = "立即登入";
+    switchText.textContent = "還沒有帳戶？";
+    switchLink.textContent = "立即註冊";
+  }
+}
+
+// 處理登入/註冊提交
+function handleAuthSubmit() {
+  const usernameInput = document.getElementById("auth-username").value.trim();
+  const passwordInput = document.getElementById("auth-password").value.trim();
+
+  if (!usernameInput || !passwordInput) {
+    showNotification("提示", "請填寫帳號與密碼。");
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem("tarot_users")) || [];
+
+  if (isRegisterMode) {
+    // 註冊邏輯
+    const exists = users.some(u => u.username.toLowerCase() === usernameInput.toLowerCase());
+    if (exists) {
+      showNotification("註冊失敗", "該用戶名稱已被使用。");
+      return;
+    }
+
+    // 建立新用戶 (預設為普通用戶 role: 'user')
+    const newUser = {
+      username: usernameInput,
+      password: passwordInput,
+      role: "user"
+    };
+
+    users.push(newUser);
+    localStorage.setItem("tarot_users", JSON.stringify(users));
+
+    // 註冊後自動登入
+    currentUser = { username: newUser.username, role: newUser.role };
+    sessionStorage.setItem("tarot_current_user", JSON.stringify(currentUser));
+    
+    showNotification("註冊成功", `帳號 ${newUser.username} 註冊成功並已自動登入！`);
+    closeAuthModal();
+    updateAuthUI();
+  } else {
+    // 登入邏輯
+    const matchedUser = users.find(u => u.username === usernameInput && u.password === passwordInput);
+    if (!matchedUser) {
+      showNotification("登入失敗", "帳號或密碼錯誤，請重新確認。");
+      return;
+    }
+
+    currentUser = { username: matchedUser.username, role: matchedUser.role };
+    sessionStorage.setItem("tarot_current_user", JSON.stringify(currentUser));
+
+    showNotification("登入成功", `歡迎回來，${currentUser.username}！`);
+    closeAuthModal();
+    updateAuthUI();
+  }
+}
+
+// 處理登出
+function handleLogout() {
+  sessionStorage.removeItem("tarot_current_user");
+  currentUser = null;
+  showNotification("已登出", "你已成功安全登出帳戶。");
+  updateAuthUI();
+  closeAdminPanel();
+}
+
+// 更新用戶登入狀態 UI
+function updateAuthUI() {
+  const welcomeText = document.getElementById("user-welcome-text");
+  const btnShowLogin = document.getElementById("btn-show-login");
+  const btnGoAdmin = document.getElementById("btn-go-admin");
+  const btnLogout = document.getElementById("btn-logout");
+
+  if (currentUser) {
+    welcomeText.innerHTML = `<i class="fa-solid fa-cat"></i> ${currentUser.username}`;
+    btnShowLogin.classList.add("hidden");
+    btnLogout.classList.remove("hidden");
+    
+    if (currentUser.role === "admin") {
+      btnGoAdmin.classList.remove("hidden");
+    } else {
+      btnGoAdmin.classList.add("hidden");
+    }
+  } else {
+    welcomeText.innerHTML = `<i class="fa-solid fa-user-ninja"></i> 訪客`;
+    btnShowLogin.classList.remove("hidden");
+    btnGoAdmin.classList.add("hidden");
+    btnLogout.classList.add("hidden");
+  }
+}
+
+// 開啟管理後台
+function openAdminPanel() {
+  if (!currentUser || currentUser.role !== "admin") return;
+
+  // 隱藏占卜桌面與選單區
+  document.getElementById("spread-selector-section").classList.add("hidden");
+  document.getElementById("tabletop-section").classList.add("hidden");
+  
+  // 顯示後台區
+  document.getElementById("admin-panel-section").classList.remove("hidden");
+
+  // 預設切換至使用者列表 tab
+  switchAdminTab("users-tab");
+}
+
+// 關閉管理後台，返回主選單
+function closeAdminPanel() {
+  document.getElementById("admin-panel-section").classList.add("hidden");
+  document.getElementById("spread-selector-section").classList.remove("hidden");
+}
+
+// 後台 Tabs 分頁切換
+function switchAdminTab(tabId) {
+  // 切換 Button 狀態
+  const tabButtons = document.querySelectorAll(".admin-tab-btn");
+  tabButtons.forEach(btn => {
+    if (btn.getAttribute("data-tab") === tabId) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // 切換內容顯示
+  const tabContents = document.querySelectorAll(".admin-tab-content");
+  tabContents.forEach(content => {
+    if (content.id === tabId) {
+      content.classList.remove("hidden");
+    } else {
+      content.classList.add("hidden");
+    }
+  });
+
+  // 載入數據
+  if (tabId === "users-tab") {
+    renderAdminUsers();
+  } else if (tabId === "history-tab") {
+    renderAdminHistory();
+  }
+}
+
+// 渲染管理後台使用者列表
+function renderAdminUsers() {
+  const users = JSON.parse(localStorage.getItem("tarot_users")) || [];
+  const tbody = document.getElementById("admin-users-table-body");
+  tbody.innerHTML = "";
+
+  users.forEach(user => {
+    const tr = document.createElement("tr");
+
+    // 判斷是否為當前登入者本人 (不可自刪、不可自降權限)
+    const isSelf = currentUser && currentUser.username === user.username;
+    
+    // 生成操作欄
+    const actionButtons = isSelf 
+      ? `<span class="role-badge admin" style="opacity:0.6;">(當前登入帳戶)</span>` 
+      : `<button class="btn-action-edit" onclick="changeUserRole('${user.username}')"><i class="fa-solid fa-user-shield"></i> 切換權限</button>
+         <button class="btn-action-delete" onclick="deleteUser('${user.username}')"><i class="fa-solid fa-user-minus"></i> 刪除</button>`;
+
+    tr.innerHTML = `
+      <td><strong>${user.username}</strong></td>
+      <td><span class="role-badge ${user.role}">${user.role === 'admin' ? '管理員 (Admin)' : '普通用戶 (User)'}</span></td>
+      <td>${actionButtons}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// 修改用戶權限角色
+function changeUserRole(username) {
+  const users = JSON.parse(localStorage.getItem("tarot_users")) || [];
+  const user = users.find(u => u.username === username);
+  if (user) {
+    user.role = user.role === "admin" ? "user" : "admin";
+    localStorage.setItem("tarot_users", JSON.stringify(users));
+    renderAdminUsers();
+  }
+}
+
+// 刪除用戶
+function deleteUser(username) {
+  if (confirm(`確定要徹底刪除用戶帳戶「${username}」嗎？此操作不可復原。`)) {
+    let users = JSON.parse(localStorage.getItem("tarot_users")) || [];
+    users = users.filter(u => u.username !== username);
+    localStorage.setItem("tarot_users", JSON.stringify(users));
+    renderAdminUsers();
+  }
+}
+
+// 自動將本次占卜結果儲存至歷史紀錄中
+function saveDivinationRecord() {
+  const history = JSON.parse(localStorage.getItem("tarot_history")) || [];
+  
+  // 1. 取得當前時間
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ` +
+                  `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+  // 2. 彙整抽卡詳細資料與位置定義
+  const cardsInfo = drawnCards.map((card, idx) => {
+    // 簡化卡槽名稱
+    const rawSlotName = selectedSpread.slots[idx].name;
+    let cleanSlot = rawSlotName.split("(")[0].split("（")[0].trim();
+    if (cleanSlot.includes("：")) cleanSlot = cleanSlot.split("：")[1].trim();
+    if (cleanSlot.includes(":")) cleanSlot = cleanSlot.split(":")[1].trim();
+
+    return `[${cleanSlot}] ${card.data.name} (${card.isReversed ? '逆位' : '正位'})`;
+  }).join(" | ");
+
+  // 3. 建立一筆歷史紀錄
+  const record = {
+    id: Date.now(),
+    username: currentUser ? currentUser.username : "訪客",
+    dateTime: dateStr,
+    spreadName: selectedSpread.title,
+    cardsInfo: cardsInfo
+  };
+
+  history.unshift(record); // 最新紀錄排在前面
+  localStorage.setItem("tarot_history", JSON.stringify(history));
+
+  console.log("占卜紀錄已自動儲存：", record);
+  updatePrompt("🔮 占卜完成！本局歷史紀錄已自動存入後台資料庫。");
+}
+
+// 渲染管理後台占卜歷史紀錄
+function renderAdminHistory() {
+  const history = JSON.parse(localStorage.getItem("tarot_history")) || [];
+  const tbody = document.getElementById("admin-history-table-body");
+  tbody.innerHTML = "";
+
+  if (history.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">目前尚無任何占卜歷史歷史紀錄。</td></tr>`;
+    return;
+  }
+
+  history.forEach(record => {
+    const tr = document.createElement("tr");
+
+    // 將卡牌清單中 "|" 隔開的字串轉換成格式化小標籤
+    const formattedCards = record.cardsInfo.split(" | ").map(c => {
+      const parts = c.split("] ");
+      const slot = parts[0].replace("[", "");
+      const card = parts[1];
+      return `<span class="history-cards-info"><strong>${slot}</strong>: ${card}</span>`;
+    }).join("<br>");
+
+    tr.innerHTML = `
+      <td>${record.dateTime}</td>
+      <td><strong>${record.username}</strong></td>
+      <td><span class="role-badge user">${record.spreadName}</span></td>
+      <td><div style="text-align:left; font-size:0.85rem; line-height:1.4;">${formattedCards}</div></td>
+      <td><button class="btn-action-delete" onclick="deleteHistoryRecord(${record.id})"><i class="fa-solid fa-trash-can"></i> 刪除</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// 刪除占卜歷史紀錄
+function deleteHistoryRecord(recordId) {
+  if (confirm("確定要刪除這筆占卜歷史歷史紀錄嗎？")) {
+    let history = JSON.parse(localStorage.getItem("tarot_history")) || [];
+    history = history.filter(r => r.id !== recordId);
+    localStorage.setItem("tarot_history", JSON.stringify(history));
+    renderAdminHistory();
+  }
+}
+
+// 匯出歷史紀錄為 Excel 相容的 CSV 檔案 (具備 UTF-8 BOM，Excel 直接開不亂碼)
+function exportHistoryToExcel() {
+  const history = JSON.parse(localStorage.getItem("tarot_history")) || [];
+  if (history.length === 0) {
+    showNotification("提示", "目前尚無任何數據可供匯出。");
+    return;
+  }
+
+  // 1. 定義 CSV 標頭
+  let csvContent = "占卜時間,抽牌使用者,使用牌陣,抽出的牌卡與位置定義\r\n";
+
+  // 2. 填充資料行 (CSV 需要處理逗號換行雙引號)
+  history.forEach(r => {
+    // 對卡牌字串進行 escape 以防 CSV 崩壞
+    const escapedCardsInfo = `"${r.cardsInfo.replace(/"/g, '""')}"`;
+    const row = `${r.dateTime},${r.username},${r.spreadName},${escapedCardsInfo}\r\n`;
+    csvContent += row;
+  });
+
+  // 3. 建立並下載檔案 (添加 \ufeff 作為 UTF-8 BOM 避免微軟 Excel 中文亂碼)
+  const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  
+  const now = new Date();
+  const dateSuffix = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  link.setAttribute("download", `tarotcat_history_${dateSuffix}.csv`);
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  console.log("占卜歷史歷史紀錄成功導出 Excel CSV！");
+}
+

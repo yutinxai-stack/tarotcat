@@ -935,3 +935,314 @@ footer {
     text-align: center;
   }
 }
+
+/* --------------------------------------------------
+   用戶狀態頂部導覽列 (User Navbar)
+   -------------------------------------------------- */
+.user-navbar {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  z-index: 100;
+}
+
+.user-status-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(18, 14, 36, 0.82);
+  border: 1px solid rgba(108, 92, 231, 0.25);
+  padding: 8px 18px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.user-status-area span {
+  color: var(--gold-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-small {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+}
+
+.btn-small:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* --------------------------------------------------
+   登入與註冊 Auth Modal
+   -------------------------------------------------- */
+.auth-modal {
+  max-width: 400px !important;
+  padding: 35px 30px !important;
+}
+
+.auth-title {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  color: var(--gold-primary);
+  text-align: center;
+  margin-bottom: 25px;
+  letter-spacing: 2px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.input-group input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-group input:focus {
+  border-color: var(--gold-primary);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.auth-submit-btn {
+  width: 100%;
+  padding: 12px !important;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.auth-switch a {
+  color: var(--gold-primary);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+  transition: color 0.3s;
+}
+
+.auth-switch a:hover {
+  color: var(--gold-hover);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------
+   管理後台 (Admin Panel)
+   -------------------------------------------------- */
+#admin-panel-section {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 40px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), 0 0 25px rgba(108, 92, 231, 0.15);
+  margin-top: 40px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.admin-header h2 {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--gold-primary);
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.admin-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.admin-tab-btn:hover {
+  color: var(--gold-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tab-btn.active {
+  color: #0c0919;
+  background: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.tab-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tab-toolbar h3 {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+/* 後台表格樣式 */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+.admin-table th {
+  background: rgba(18, 14, 36, 0.95);
+  color: var(--gold-primary);
+  font-weight: 600;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  letter-spacing: 0.5px;
+}
+
+.admin-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.admin-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* 表格內的權限標籤與操作按鈕 */
+.role-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.role-badge.admin {
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+}
+
+.role-badge.user {
+  background: rgba(108, 92, 231, 0.15);
+  border: 1px solid #6c5ce7;
+  color: #a29bfe;
+}
+
+.btn-action-delete {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid #e74c3c;
+  color: #ff7675;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.btn-action-delete:hover {
+  background: #e74c3c;
+  color: white;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+}
+
+.btn-action-edit {
+  background: rgba(52, 152, 219, 0.15);
+  border: 1px solid #3498db;
+  color: #74b9ff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
+
+.btn-action-edit:hover {
+  background: #3498db;
+  color: white;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
+}
+
+/* 占卜內容卡片在表格中的特殊排版 */
+.history-cards-info {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.history-cards-info strong {
+  color: var(--gold-primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 響應式後台調整 */
+@media (max-width: 900px) {
+  #admin-panel-section {
+    padding: 20px;
+  }
+  
+  .admin-header h2 {
+    font-size: 1.4rem;
+  }
+}

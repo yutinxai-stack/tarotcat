@@ -18,6 +18,16 @@
   <div class="stars-container"></div>
   <div class="nebula-container"></div>
 
+  <!-- 用戶狀態頂部導覽列 -->
+  <nav class="user-navbar">
+    <div class="user-status-area">
+      <span id="user-welcome-text"><i class="fa-solid fa-cat"></i> 訪客</span>
+      <button id="btn-show-login" class="btn-small"><i class="fa-solid fa-right-to-bracket"></i> 登入 / 註冊</button>
+      <button id="btn-go-admin" class="btn-small hidden"><i class="fa-solid fa-toolbox"></i> 管理後台</button>
+      <button id="btn-logout" class="btn-small hidden"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
+    </div>
+  </nav>
+
   <header>
     <div class="logo">
       <i class="fa-solid fa-cat"></i>
@@ -127,6 +137,65 @@
         </div>
       </div>
     </section>
+
+    <!-- 1.5. 管理後台面板區 -->
+    <section id="admin-panel-section" class="hidden">
+      <div class="admin-header">
+        <h2><i class="fa-solid fa-toolbox"></i> TAROTCAT 管理後台</h2>
+        <button id="btn-close-admin" class="btn-secondary"><i class="fa-solid fa-circle-xmark"></i> 關閉後台</button>
+      </div>
+      
+      <!-- 後台分頁按鈕 -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" data-tab="users-tab"><i class="fa-solid fa-users-gear"></i> 使用者管理</button>
+        <button class="admin-tab-btn" data-tab="history-tab"><i class="fa-solid fa-book-sparkles"></i> 占卜歷史紀錄</button>
+      </div>
+      
+      <!-- 分頁1: 使用者管理 -->
+      <div id="users-tab" class="admin-tab-content">
+        <div class="tab-toolbar">
+          <h3>使用者帳號與權限列表</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>用戶名稱</th>
+                <th>帳號權限</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <!-- JS 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- 分頁2: 占卜歷史紀錄 -->
+      <div id="history-tab" class="admin-tab-content hidden">
+        <div class="tab-toolbar">
+          <h3>占卜歷史歷史紀錄</h3>
+          <button id="btn-export-excel" class="btn-primary"><i class="fa-solid fa-file-excel"></i> 匯出 Excel (CSV)</button>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>時間</th>
+                <th>抽牌者</th>
+                <th>使用牌陣</th>
+                <th>抽出的牌卡與位置定義</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="admin-history-table-body">
+              <!-- JS 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- 3. 牌卡詳細資訊 Modal (彈出 Lightbox) -->
@@ -163,6 +232,28 @@
             <p><i class="fa-solid fa-cat"></i> 貓咪耳語：相信你的第一直覺，這正是宇宙此時此刻帶給你的啟示。</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 登入/註冊 Modal (Auth Modal) -->
+  <div id="login-modal" class="modal-overlay hidden">
+    <div class="modal-content auth-modal">
+      <button class="close-modal" id="btn-close-auth-modal"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="auth-modal-title" class="auth-title">登入占卜帳戶</h2>
+      <form id="auth-form" onsubmit="event.preventDefault();">
+        <div class="input-group">
+          <label for="auth-username">帳號 (Username)</label>
+          <input type="text" id="auth-username" required placeholder="請輸入帳號">
+        </div>
+        <div class="input-group">
+          <label for="auth-password">密碼 (Password)</label>
+          <input type="password" id="auth-password" required placeholder="請輸入密碼">
+        </div>
+        <button type="submit" id="btn-auth-submit" class="btn-primary auth-submit-btn">立即登入</button>
+      </form>
+      <div class="auth-switch">
+        <span id="auth-switch-text">還沒有帳戶？</span> <a href="#" id="link-switch-auth">立即註冊</a>
       </div>
     </div>
   </div>
