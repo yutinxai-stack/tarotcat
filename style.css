@@ -384,6 +384,20 @@ button {
   box-shadow: 0 0 12px rgba(108, 92, 231, 0.2);
 }
 
+/* 針對深色 Header 條內按鈕的對比度修正 */
+.tabletop-header .btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.tabletop-header .btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+}
+
 /* --------------------------------------------------
    桌布核心佈局
    -------------------------------------------------- */
