@@ -758,6 +758,14 @@ function openCardDetail(cardData, slotIndex) {
     descText.textContent = cardData.upright || "暫無正位牌意說明。";
   }
 
+  // 依據主題動態替換寵物耳語 (貓語/狗語)
+  const tipText = document.getElementById("modal-ritual-tip-text");
+  if (currentTheme === "dog") {
+    tipText.innerHTML = `<i class="fa-solid fa-dog"></i> 狗狗耳語：搖搖尾巴、聽從直覺，這正是宇宙此時此刻帶給你的啟示。`;
+  } else {
+    tipText.innerHTML = `<i class="fa-solid fa-cat"></i> 貓咪耳語：相信你的第一直覺，這正是宇宙此時此刻帶給你的啟示。`;
+  }
+
   // 顯示 Modal
   modal.classList.remove("hidden");
   document.body.style.overflow = "hidden"; // 避免底層滾動
