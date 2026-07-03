@@ -491,54 +491,72 @@ function drawCard(cardEl, fanIndex) {
   if (!targetSlot) return;
 
   // 1. 取得這張牌分配到的塔羅牌義資料
-  // 從被打亂的 activeDeck 中取出一張牌
   const cardData = activeDeck[fanIndex];
   
+  // 2. 複製該卡牌節點，藉此清除原本的點選抽取 Event Listener
+  const newCardEl = cardEl.cloneNode(true);
+  
+  // 在 DOM 中替換舊節點
+  cardEl.parentNode.replaceChild(newCardEl, cardEl);
+
   // 記錄到已抽卡片陣列
   drawnCards.push({
     data: cardData,
     slotName: selectedSpread.slots[targetSlotIndex].name,
     isReversed: cardData.isReversed,
-    element: cardEl
+    element: newCardEl
   });
 
   // 更新右上角計數
   updateCountBadge();
 
-  // 2. 移動卡牌到 Slot 位置 (動態飛躍動畫)
-  // 移除 hover 特效與滑動監聽，防止干擾
-  cardEl.style.pointerEvents = "none";
-  
-  // 計算 Slot 相對於 tabletop 的座標
-  const tabletopRect = document.querySelector(".tabletop").getBoundingClientRect();
+  // 3. 準備發牌飛躍動畫
+  // 取得相對定位基準父元素 (.tabletop) 及其它元素的位置
+  const tabletop = document.querySelector(".tabletop");
+  const tabletopRect = tabletop.getBoundingClientRect();
+  const cardRect = newCardEl.getBoundingClientRect();
   const slotRect = targetSlot.getBoundingClientRect();
-  
-  const leftPos = slotRect.left - tabletopRect.left;
-  const topPos = slotRect.top - tabletopRect.top;
 
-  // 讓卡牌飛到目標卡槽
-  cardEl.style.transform = "none"; // 清除扇形旋轉
-  
-  // 凱爾特十字位置 2 需旋轉 90 度橫放
-  if (selectedSpread.title === "凱爾特十字" && targetSlotIndex === 1) {
-    cardEl.style.transform = "rotate(90deg)";
-  }
+  // 計算卡牌當前相對於 tabletop 的座標
+  const currentLeft = cardRect.left - tabletopRect.left;
+  const currentTop = cardRect.top - tabletopRect.top;
 
-  cardEl.style.left = `${leftPos}px`;
-  cardEl.style.top = `${topPos}px`;
-  cardEl.style.zIndex = 100 + targetSlotIndex;
+  // 計算目標 Slot 相對於 tabletop 的座標
+  const targetLeft = slotRect.left - tabletopRect.left;
+  const targetTop = slotRect.top - tabletopRect.top;
 
-  // 3. 將卡牌內容替換為正面的 3D 架構
-  const innerEl = cardEl.querySelector(".tarot-card-inner");
-  
-  // 建立正面 DOM
+  // 將 DOM 父層級轉移到 tabletop，並維持在原位 (包含原本扇形的 rotate transform)
+  newCardEl.style.pointerEvents = "none"; // 飛行過程中禁止點擊
+  const originalTransform = newCardEl.style.transform;
+  tabletop.appendChild(newCardEl);
+
+  newCardEl.style.left = `${currentLeft}px`;
+  newCardEl.style.top = `${currentTop}px`;
+  newCardEl.style.transform = originalTransform;
+
+  // 4. 動態播放飛躍與對齊插槽的 transition 動畫 (延遲設定觸發重繪)
+  setTimeout(() => {
+    newCardEl.style.transform = "none";
+    
+    // 凱爾特十字位置 2 需旋轉 90 度橫放
+    if (selectedSpread.title === "凱爾特十字" && targetSlotIndex === 1) {
+      newCardEl.style.transform = "rotate(90deg)";
+    }
+
+    newCardEl.style.left = `${targetLeft}px`;
+    newCardEl.style.top = `${targetTop}px`;
+    newCardEl.style.zIndex = 100 + targetSlotIndex;
+  }, 50);
+
+  // 5. 替換為正面的 3D 架構 (此時仍為背面朝上)
+  const innerEl = newCardEl.querySelector(".tarot-card-inner");
   const frontEl = document.createElement("div");
   frontEl.classList.add("tarot-card-front");
   if (cardData.isReversed) {
     frontEl.classList.add("reversed");
   }
 
-  // 圖片路徑
+  // 載入對應 images 資料夾下的圖片
   const imgUrl = `images/${cardData.filename}`;
   frontEl.innerHTML = `<img src="${imgUrl}" alt="${cardData.name}">`;
   innerEl.appendChild(frontEl);
@@ -546,22 +564,24 @@ function drawCard(cardEl, fanIndex) {
   // 讓卡槽高亮顯示已放入
   targetSlot.classList.add("active");
 
-  // 點選已發的牌播放 3D 翻轉，並在翻開狀態下彈出 Lightbox
-  cardEl.style.pointerEvents = "auto";
-  cardEl.addEventListener("click", () => {
-    if (!cardEl.classList.contains("flipped")) {
-      cardEl.classList.add("flipped");
-      updatePrompt(`點選已翻開的「${cardData.name}」可查看詳細解牌義。`);
-    } else {
-      openCardDetail(cardData, targetSlotIndex);
-    }
-  });
+  // 6. 卡片飛入定位後 (650ms) 啟用點擊事件，進行 3D 翻轉翻牌或打開 Lightbox
+  setTimeout(() => {
+    newCardEl.style.pointerEvents = "auto";
+    newCardEl.addEventListener("click", () => {
+      if (!newCardEl.classList.contains("flipped")) {
+        newCardEl.classList.add("flipped");
+        updatePrompt(`點選已翻開的「${cardData.name}」可查看詳細解牌義。`);
+      } else {
+        openCardDetail(cardData, targetSlotIndex);
+      }
+    });
+  }, 650);
 
   // 更新下一步提示
   if (drawnCards.length < selectedSpread.slots.length) {
     updatePrompt(`已抽 ${drawnCards.length} 張。請繼續抽取下一張。`);
   } else {
-    updatePrompt("🎉 抽牌完成！點擊牌陣中的卡牌進行翻牌，再次點擊即可看大圖與解牌。");
+    updatePrompt("🎉 抽牌完成！點擊牌陣中的卡牌進行翻牌，再次點擊即可看大圖與解牌義。");
     document.getElementById("btn-auto-deal").classList.add("hidden");
   }
 }
