@@ -1268,6 +1268,7 @@ footer {
 /* --------------------------------------------------
    0. 主題選擇首頁 (#theme-selector-section) 樣式
    -------------------------------------------------- */
+#auth-landing-section,
 #theme-selector-section {
   display: flex;
   flex-direction: column;

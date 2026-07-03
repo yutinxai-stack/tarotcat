@@ -342,6 +342,11 @@ function setupEventListeners() {
   document.getElementById("btn-switch-theme").addEventListener("click", () => {
     switchThemeBackToLanding();
   });
+
+  // 歡迎頁登入按鈕
+  document.getElementById("btn-landing-login").addEventListener("click", () => {
+    openAuthModal();
+  });
 }
 
 // 6. 選擇牌陣與桌布初始化
@@ -930,6 +935,10 @@ function updateAuthUI() {
   const btnShowLogin = document.getElementById("btn-show-login");
   const btnGoAdmin = document.getElementById("btn-go-admin");
   const btnLogout = document.getElementById("btn-logout");
+  const btnSwitchTheme = document.getElementById("btn-switch-theme");
+
+  const authLanding = document.getElementById("auth-landing-section");
+  const themeSelector = document.getElementById("theme-selector-section");
 
   if (currentUser) {
     welcomeText.innerHTML = `<i class="fa-solid fa-cat"></i> ${currentUser.username}`;
@@ -941,11 +950,34 @@ function updateAuthUI() {
     } else {
       btnGoAdmin.classList.add("hidden");
     }
+
+    // 隱藏未登入歡迎頁面
+    if (authLanding) authLanding.classList.add("hidden");
+    
+    // 如果此時沒有任何主視窗開啟，則自動顯示寵物選擇首頁
+    const isMainHidden = document.getElementById("spread-selector-section").classList.contains("hidden") &&
+                         document.getElementById("tabletop-section").classList.contains("hidden") &&
+                         document.getElementById("admin-panel-section").classList.contains("hidden");
+    if (isMainHidden && themeSelector) {
+      themeSelector.classList.remove("hidden");
+    }
   } else {
     welcomeText.innerHTML = `<i class="fa-solid fa-user-ninja"></i> 訪客`;
     btnShowLogin.classList.remove("hidden");
     btnGoAdmin.classList.add("hidden");
     btnLogout.classList.add("hidden");
+    if (btnSwitchTheme) btnSwitchTheme.classList.add("hidden");
+
+    // 訪客強迫回歡迎頁，其餘網頁區塊全部強制隱藏
+    if (authLanding) authLanding.classList.remove("hidden");
+    if (themeSelector) themeSelector.classList.add("hidden");
+    
+    const headerEl = document.querySelector("header");
+    if (headerEl) headerEl.classList.add("hidden");
+    
+    document.getElementById("spread-selector-section").classList.add("hidden");
+    document.getElementById("tabletop-section").classList.add("hidden");
+    document.getElementById("admin-panel-section").classList.add("hidden");
   }
 }
 
