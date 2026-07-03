@@ -571,6 +571,22 @@ function drawCard(cardEl, fanIndex) {
   // 讓卡槽高亮顯示已放入
   targetSlot.classList.add("active");
 
+  // 建立位置 label，常駐於卡牌正下方以清晰顯示牌陣意思
+  const labelEl = document.createElement("div");
+  labelEl.classList.add("card-slot-label");
+  
+  // 清理 Slot 名字，去除括號註解與前置指示以求精簡高雅
+  const rawName = selectedSpread.slots[targetSlotIndex].name;
+  let cleanName = rawName.split("(")[0].split("（")[0].trim();
+  if (cleanName.includes("：")) {
+    cleanName = cleanName.split("：")[1].trim();
+  } else if (cleanName.includes(":")) {
+    cleanName = cleanName.split(":")[1].trim();
+  }
+  
+  labelEl.textContent = cleanName;
+  newCardEl.appendChild(labelEl);
+
   // 6. 卡片飛入定位後 (650ms) 啟用點擊事件，進行 3D 翻轉翻牌或打開 Lightbox
   setTimeout(() => {
     newCardEl.style.pointerEvents = "auto";
