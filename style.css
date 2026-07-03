@@ -1,0 +1,878 @@
+/* --------------------------------------------------
+   塔羅貓 (tarotcat) 神秘暗黑風設計系統
+   -------------------------------------------------- */
+
+:root {
+  --bg-color: #080610;
+  --bg-gradient: linear-gradient(135deg, #07050f 0%, #120e24 50%, #080610 100%);
+  --panel-bg: rgba(18, 14, 36, 0.65);
+  --panel-border: rgba(212, 175, 55, 0.2);
+  --gold-primary: #d4af37;
+  --gold-hover: #f3e5ab;
+  --gold-glow: rgba(212, 175, 55, 0.35);
+  --purple-glow: rgba(142, 68, 173, 0.5);
+  --text-primary: #f5f4f9;
+  --text-secondary: #b6b3c6;
+  --font-title: 'Cinzel', 'Playfair Display', serif;
+  --font-body: 'Outfit', 'Inter', sans-serif;
+  --card-width: 110px;
+  --card-height: 190px;
+}
+
+/* --------------------------------------------------
+   基礎與背景樣式
+   -------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  background-image: var(--bg-gradient);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 繁體中文適配與流暢渲染 */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 星光與星雲背景 */
+.stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px);
+  background-size: 550px 550px;
+  opacity: 0.12;
+  z-index: -2;
+  animation: starsAnimation 120s linear infinite;
+}
+
+.nebula-container {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(142, 68, 173, 0.12) 0%, rgba(41, 128, 185, 0.05) 50%, transparent 100%);
+  z-index: -1;
+  animation: nebulaAnimation 80s ease-in-out infinite alternate;
+}
+
+@keyframes starsAnimation {
+  from { background-position: 0 0; }
+  to { background-position: 550px 1100px; }
+}
+
+@keyframes nebulaAnimation {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(360deg) scale(1.1); }
+}
+
+/* --------------------------------------------------
+   頁首 Header
+   -------------------------------------------------- */
+header {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+header .logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+header .logo i {
+  font-size: 3rem;
+  color: var(--gold-primary);
+  filter: drop-shadow(0 0 10px var(--gold-glow));
+  margin-bottom: 5px;
+  animation: logoCatGlow 4s ease-in-out infinite alternate;
+}
+
+header h1 {
+  font-family: var(--font-title);
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--text-primary);
+  background: linear-gradient(to right, #f3e5ab, #d4af37, #f3e5ab);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+}
+
+header .sub-title {
+  font-size: 0.95rem;
+  letter-spacing: 6px;
+  color: var(--gold-primary);
+  text-transform: uppercase;
+  margin-top: 5px;
+  opacity: 0.9;
+}
+
+header .intro-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 15px auto 0 auto;
+  line-height: 1.6;
+}
+
+@keyframes logoCatGlow {
+  0% { filter: drop-shadow(0 0 5px var(--gold-glow)); }
+  100% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8)) rotate(5deg); }
+}
+
+/* --------------------------------------------------
+   主要內容與排版
+   -------------------------------------------------- */
+main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 60px 20px;
+  z-index: 5;
+}
+
+.section-title {
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--gold-primary);
+  margin-bottom: 40px;
+  letter-spacing: 3px;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--gold-primary);
+  margin: 12px auto 0 auto;
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --------------------------------------------------
+   1. 牌陣選擇區 (Spread Selector)
+   -------------------------------------------------- */
+.spread-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 10px 0;
+}
+
+.spread-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 30px 24px;
+  text-align: center;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.spread-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.spread-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 15px 40px rgba(142, 68, 173, 0.25), 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+.spread-card:hover::before {
+  opacity: 1;
+}
+
+.spread-card .card-icon {
+  font-size: 2.2rem;
+  color: var(--gold-primary);
+  margin-bottom: 20px;
+  transition: transform 0.5s;
+}
+
+.spread-card:hover .card-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.spread-card h3 {
+  font-family: var(--font-title);
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.spread-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  min-height: 48px;
+}
+
+.spread-card .card-count {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-primary);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.spread-card:hover .card-count {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--text-primary);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+/* --------------------------------------------------
+   2. 占卜桌面區 (Tabletop)
+   -------------------------------------------------- */
+.tabletop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  padding: 15px 30px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+#current-spread-title {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  color: var(--gold-primary);
+  letter-spacing: 1px;
+  display: inline-block;
+}
+
+#current-spread-count-badge {
+  display: inline-block;
+  margin-left: 12px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid var(--gold-primary);
+  color: var(--text-primary);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  vertical-align: middle;
+  font-weight: 600;
+}
+
+.mystical-prompt {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--gold-primary);
+  margin-bottom: 25px;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  letter-spacing: 1px;
+  animation: promptPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes promptPulse {
+  0% { opacity: 0.8; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
+  100% { opacity: 1; text-shadow: 0 0 15px rgba(212, 175, 55, 0.8); }
+}
+
+.ritual-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+/* --------------------------------------------------
+   按鈕樣式
+   -------------------------------------------------- */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border-radius: 30px;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #d4af37 0%, #b8972c 100%);
+  color: #0c0919;
+  font-weight: 600;
+  padding: 14px 32px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  padding: 10px 22px;
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+}
+
+/* --------------------------------------------------
+   桌布核心佈局
+   -------------------------------------------------- */
+.tabletop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  min-height: 600px;
+  position: relative;
+}
+
+/* 牌陣擺放區 */
+.spread-layout-container {
+  width: 100%;
+  max-width: 900px;
+  height: 480px;
+  position: relative;
+  border-radius: 24px;
+  background: radial-gradient(circle, rgba(20, 15, 45, 0.4) 0%, transparent 80%);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(212, 175, 55, 0.1);
+}
+
+/* 牌陣槽 (卡槽) */
+.spread-slot {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+  border: 1px dashed rgba(212, 175, 55, 0.35);
+  border-radius: 10px;
+  background: rgba(10, 8, 20, 0.65);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.spread-slot.active {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.spread-slot .slot-number {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  color: var(--gold-primary);
+  margin-bottom: 5px;
+  opacity: 0.8;
+}
+
+.spread-slot .slot-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* 牌堆/扇形洗牌區 */
+.deck-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+}
+
+/* --------------------------------------------------
+   3D 塔羅牌樣式與動畫
+   -------------------------------------------------- */
+.tarot-card {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+  cursor: pointer;
+  user-select: none;
+  perspective: 1000px;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15), top 0.6s, left 0.6s;
+  z-index: 10;
+}
+
+/* 卡牌內層 (用來實現 3D 翻轉) */
+.tarot-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  border-radius: 10px;
+}
+
+/* 當卡牌被翻開時 */
+.tarot-card.flipped .tarot-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* 卡牌正反面 */
+.tarot-card-front,
+.tarot-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+/* 卡牌背面 (神秘花紋 + 貓咪圖騰) */
+.tarot-card-back {
+  background: linear-gradient(135deg, #100c22 0%, #1d173d 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--gold-primary);
+  padding: 10px;
+}
+
+/* 背面裝飾邊框與圖形 */
+.tarot-card-back::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+.tarot-card-back::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  right: 9px;
+  bottom: 9px;
+  border: 1px dashed rgba(212, 175, 55, 0.15);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.tarot-card-back i.fa-cat {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.4));
+}
+
+.tarot-card-back .back-pattern {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: rotate(45deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tarot-card-back .back-pattern::after {
+  content: '★';
+  font-size: 0.6rem;
+  transform: rotate(-45deg);
+  color: var(--gold-primary);
+}
+
+/* 卡牌正面 (圖案顯示區) */
+.tarot-card-front {
+  background: #0d0b16;
+  transform: rotateY(180deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.tarot-card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 逆位翻轉效果 */
+.tarot-card-front.reversed img {
+  transform: rotate(180deg);
+}
+
+/* 逆位標籤 (僅在正面加一個精巧指示) */
+.tarot-card-front.reversed::after {
+  content: 'R';
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  background: rgba(231, 76, 60, 0.85);
+  border: 1px solid #ff7675;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 卡牌滑過與點選效果 */
+.deck-container .tarot-card:hover {
+  transform: translateY(-20px) scale(1.05);
+  z-index: 100 !important;
+}
+
+/* --------------------------------------------------
+   洗牌動畫特效 (Shuffling CSS Classes)
+   -------------------------------------------------- */
+.shuffling {
+  animation: cardShuffle 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes cardShuffle {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(var(--shuffle-x, 80px), var(--shuffle-y, -10px)) rotate(var(--shuffle-r, 15deg)) scale(0.95);
+  }
+  100% {
+    transform: translate(calc(var(--shuffle-x, 80px) * -1), var(--shuffle-y, 10px)) rotate(calc(var(--shuffle-r, 15deg) * -1)) scale(1.05);
+  }
+}
+
+/* --------------------------------------------------
+   3. 牌卡詳細資訊彈出 Modal (Lightbox)
+   -------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 10, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.modal-overlay:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(17, 13, 33, 0.95);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 780px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.25);
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+  transform: scale(1) translateY(0);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.close-modal:hover {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: #e74c3c;
+  color: #e74c3c;
+  transform: rotate(90deg);
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+}
+
+/* 卡框與大圖 */
+.modal-image-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-frame {
+  width: 210px;
+  height: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.3);
+  background: #08060f;
+  transition: transform 0.6s ease;
+}
+
+.card-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 詳解區 */
+.modal-info-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.modal-card-header {
+  margin-bottom: 20px;
+}
+
+.card-position-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-card-header h2 {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+/* 正逆位標籤 */
+.orientation-badge {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 5px 16px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+.orientation-badge.upright {
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid #2ecc71;
+  color: #2ecc71;
+}
+
+.orientation-badge.reversed {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--gold-primary), transparent);
+  margin: 15px 0 20px 0;
+  opacity: 0.4;
+}
+
+.modal-card-meaning h3 {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--gold-primary);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.modal-card-meaning p {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  letter-spacing: 0.8px;
+}
+
+.modal-ritual-tip {
+  margin-top: 30px;
+  padding: 15px 20px;
+  background: rgba(212, 175, 55, 0.05);
+  border-left: 3px solid var(--gold-primary);
+  border-radius: 0 12px 12px 0;
+}
+
+.modal-ritual-tip p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.modal-ritual-tip i {
+  color: var(--gold-primary);
+  margin-right: 5px;
+}
+
+/* --------------------------------------------------
+   頁尾 Footer
+   -------------------------------------------------- */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: auto;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------
+   響應式排版 (Responsive Design)
+   -------------------------------------------------- */
+@media (max-width: 900px) {
+  .spread-layout-container {
+    height: auto;
+    min-height: 480px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px 15px;
+    background: rgba(20, 15, 45, 0.3);
+  }
+
+  .spread-slot {
+    position: static;
+    transform: none;
+  }
+
+  .modal-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .modal-content {
+    padding: 30px 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .card-frame {
+    width: 160px;
+    height: 270px;
+  }
+}
+
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2.2rem;
+  }
+
+  .tabletop-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  #current-spread-count-badge {
+    margin-left: 0;
+    margin-top: 8px;
+    display: inline-block;
+  }
+}

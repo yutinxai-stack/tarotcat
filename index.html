@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塔羅貓 (tarotcat) 🐱🔮 - 現代神秘學抽牌網站</title>
+  <!-- Google Fonts: Cinzel for title/headings, Outfit for text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 星光背景效果 -->
+  <div class="stars-container"></div>
+  <div class="nebula-container"></div>
+
+  <header>
+    <div class="logo">
+      <i class="fa-solid fa-cat"></i>
+      <h1>TAROTCAT</h1>
+      <span class="sub-title">貓咪神祕塔羅占卜</span>
+    </div>
+    <p class="intro-desc">在貓咪神秘學的指引下，洗淨雜念、靜心凝神，選擇一個牌陣來指引你的命運。</p>
+  </header>
+
+  <main>
+    <!-- 1. 牌陣選擇區 -->
+    <section id="spread-selector-section">
+      <h2 class="section-title">選擇占卜牌陣</h2>
+      <div class="spread-grid">
+        <!-- 8大牌陣卡片 -->
+        <div class="spread-card" data-spread="one-card">
+          <div class="card-icon"><i class="fa-solid fa-square"></i></div>
+          <h3>單牌占卜</h3>
+          <p>解答簡單的是非問句，或抽取今日的貓咪運勢指引。</p>
+          <span class="card-count">需要 1 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="three-cards">
+          <div class="card-icon"><i class="fa-solid fa-table-columns"></i></div>
+          <h3>聖三角牌陣</h3>
+          <p>經典的時間之流牌陣，釐清問題的過去、現在與未來演變。</p>
+          <span class="card-count">需要 3 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="gypsy-cross">
+          <div class="card-icon"><i class="fa-solid fa-shapes"></i></div>
+          <h3>吉普賽十字</h3>
+          <p>探索人際關係與愛情，解析雙方心態、關係障礙與未來。</p>
+          <span class="card-count">需要 4 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="two-options">
+          <div class="card-icon"><i class="fa-solid fa-code-fork"></i></div>
+          <h3>二擇一牌陣</h3>
+          <p>面臨兩難抉擇時，為你剖析選擇 A 與選擇 B 的發展與結果。</p>
+          <span class="card-count">需要 5 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="cross">
+          <div class="card-icon"><i class="fa-solid fa-cross"></i></div>
+          <h3>十字架牌陣</h3>
+          <p>深入探討特定挑戰的根源、阻礙、目標、對策與最終結果。</p>
+          <span class="card-count">需要 5 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="horseshoe">
+          <div class="card-icon"><i class="fa-solid fa-circle-notch"></i></div>
+          <h3>馬蹄鐵牌陣</h3>
+          <p>分析事件的完整演變，了解周遭影響、建議行動與未來。 </p>
+          <span class="card-count">需要 6 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="hexagram">
+          <div class="card-icon"><i class="fa-solid fa-star-of-david"></i></div>
+          <h3>六芒星牌陣</h3>
+          <p>多維度分析事情，涵蓋內外在環境、對策、願望與最終預測。</p>
+          <span class="card-count">需要 7 張牌</span>
+        </div>
+
+        <div class="spread-card" data-spread="celtic-cross">
+          <div class="card-icon"><i class="fa-solid fa-clover"></i></div>
+          <h3>凱爾特十字</h3>
+          <p>極具深度的經典綜合分析，全面拆解現狀、障礙、潛意識與未來。</p>
+          <span class="card-count">需要 10 張牌</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 占卜互動桌布 -->
+    <section id="tabletop-section" class="hidden">
+      <!-- 頂部控制列 -->
+      <div class="tabletop-header">
+        <button id="btn-back-to-menu" class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> 重新選擇牌陣</button>
+        <div class="current-spread-info">
+          <h2 id="current-spread-title">聖三角牌陣</h2>
+          <span id="current-spread-count-badge">0 / 3 張</span>
+        </div>
+        <button id="btn-reset-table" class="btn-secondary"><i class="fa-solid fa-rotate-left"></i> 重置桌布</button>
+      </div>
+
+      <!-- 狀態引導提示 -->
+      <div class="mystical-prompt" id="mystical-status-text">
+        請在心中默想你的問題，然後點擊「開始洗牌」進入儀式。
+      </div>
+
+      <!-- 儀式控制按鈕 -->
+      <div class="ritual-controls">
+        <button id="btn-shuffle" class="btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> 開始洗牌儀式</button>
+        <button id="btn-auto-deal" class="btn-primary hidden"><i class="fa-solid fa-wand-sparkles"></i> 自動分發卡牌</button>
+      </div>
+
+      <!-- 抽牌桌布容器 -->
+      <div class="tabletop">
+        <!-- 牌陣卡槽擺放區 (左/中/右視牌陣而定) -->
+        <div class="spread-layout-container" id="spread-layout-container">
+          <!-- 卡槽會由 JS 動態生成 -->
+        </div>
+
+        <!-- 牌堆/洗牌互動區 -->
+        <div class="deck-container" id="deck-container">
+          <!-- 78張牌會動態在此洗牌、排成扇形供使用者抽取 -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 3. 牌卡詳細資訊 Modal (彈出 Lightbox) -->
+  <div id="card-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="close-modal" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-grid">
+        <!-- 卡牌大圖展示區 -->
+        <div class="modal-image-area">
+          <div class="card-frame" id="modal-card-frame">
+            <img src="" alt="塔羅牌圖案" id="modal-card-img">
+          </div>
+        </div>
+
+        <!-- 卡牌資訊與解牌牌義區 -->
+        <div class="modal-info-area">
+          <div class="modal-card-header">
+            <span class="card-position-badge" id="modal-card-position-text">位置 1：過去</span>
+            <h2 id="modal-card-title">愚者 (The Fool)</h2>
+            <div class="orientation-badge" id="modal-card-orientation">正位 (Upright)</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="modal-card-meaning">
+            <h3>🔮 牌義解析</h3>
+            <p id="modal-card-description">
+              這是牌義的描述文字。
+            </p>
+          </div>
+
+          <div class="modal-ritual-tip">
+            <p><i class="fa-solid fa-cat"></i> 貓咪耳語：相信你的第一直覺，這正是宇宙此時此刻帶給你的啟示。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 TAROTCAT - 貓咪神秘學塔羅桌面. Crafted with Magic.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
