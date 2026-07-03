@@ -1,18 +1,20 @@
 /* --------------------------------------------------
-   塔羅貓 (tarotcat) 神秘暗黑風設計系統
+   塔羅貓 (tarotcat) 神秘淡雅風設計系統
    -------------------------------------------------- */
 
 :root {
-  --bg-color: #080610;
-  --bg-gradient: linear-gradient(135deg, #07050f 0%, #120e24 50%, #080610 100%);
-  --panel-bg: rgba(18, 14, 36, 0.65);
-  --panel-border: rgba(212, 175, 55, 0.2);
+  --bg-color: #e9e2f5;
+  --bg-gradient: linear-gradient(135deg, #f7f3fd 0%, #dbd0ee 100%);
+  --panel-bg: rgba(18, 14, 36, 0.82); /* 提高透明度與面板暗度以提升可讀性 */
+  --panel-border: rgba(108, 92, 231, 0.25);
   --gold-primary: #d4af37;
   --gold-hover: #f3e5ab;
   --gold-glow: rgba(212, 175, 55, 0.35);
-  --purple-glow: rgba(142, 68, 173, 0.5);
+  --purple-glow: rgba(142, 68, 173, 0.4);
   --text-primary: #f5f4f9;
-  --text-secondary: #b6b3c6;
+  --text-secondary: #c7c4d6;
+  --text-dark: #3a2a6b; /* 用於淺色背景上的文字 */
+  --text-dark-secondary: #5f4c9c;
   --font-title: 'Cinzel', 'Playfair Display', serif;
   --font-body: 'Outfit', 'Inter', sans-serif;
   --card-width: 110px;
@@ -30,8 +32,13 @@
 
 body {
   background-color: var(--bg-color);
-  background-image: var(--bg-gradient);
-  color: var(--text-primary);
+  /* SVG 重複貓咪 + 星星星座背景圖案，浮現於淡紫色漸層底圖上 */
+  background-image: 
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 30 55 C 30 43, 35 38, 42 38 C 46 38, 48 40, 50 40 C 52 40, 54 38, 58 38 C 65 38, 70 43, 70 55 C 70 67, 65 72, 50 72 C 35 72, 30 67, 30 55 Z" fill="none" stroke="rgba(108, 92, 231, 0.08)" stroke-width="1.2" /><path d="M 33 42 L 25 20 L 44 38" fill="none" stroke="rgba(108, 92, 231, 0.08)" stroke-width="1.2" /><path d="M 67 42 L 75 20 L 56 38" fill="none" stroke="rgba(108, 92, 231, 0.08)" stroke-width="1.2" /><path d="M 15 25 L 17 22 L 20 23 L 18 26 L 19 29 L 16 27 L 13 29 L 14 26 L 12 23 L 15 22 Z" fill="rgba(108, 92, 231, 0.04)" /><path d="M 85 75 L 87 72 L 90 73 L 88 76 L 89 79 L 86 77 L 83 79 L 84 76 L 82 73 L 85 72 Z" fill="rgba(108, 92, 231, 0.04)" /><path d="M 50 15 A 8 8 0 0 1 44 27 A 8 8 0 0 0 52 23 A 8 8 0 0 0 50 15" fill="rgba(108, 92, 231, 0.06)" /></svg>'),
+    var(--bg-gradient);
+  background-repeat: repeat;
+  background-size: 100px 100px, auto;
+  color: var(--text-dark); /* 預設文字改為深色 */
   font-family: var(--font-body);
   min-height: 100vh;
   overflow-x: hidden;
@@ -54,11 +61,12 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px);
+  background: radial-gradient(white, rgba(255, 255, 255, 0.15) 2px, transparent 40px);
   background-size: 550px 550px;
-  opacity: 0.12;
+  opacity: 0.25; /* 調高在亮背景下的能見度 */
   z-index: -2;
   animation: starsAnimation 120s linear infinite;
+  mix-blend-mode: color-burn; /* 混色使星光呈現淡淡的紫色 */
 }
 
 .nebula-container {
@@ -67,7 +75,7 @@ html {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(142, 68, 173, 0.12) 0%, rgba(41, 128, 185, 0.05) 50%, transparent 100%);
+  background: radial-gradient(circle, rgba(142, 68, 173, 0.18) 0%, rgba(108, 92, 231, 0.08) 50%, transparent 100%);
   z-index: -1;
   animation: nebulaAnimation 80s ease-in-out infinite alternate;
 }
@@ -102,8 +110,8 @@ header .logo {
 
 header .logo i {
   font-size: 3rem;
-  color: var(--gold-primary);
-  filter: drop-shadow(0 0 10px var(--gold-glow));
+  color: var(--text-dark);
+  filter: drop-shadow(0 0 8px rgba(108, 92, 231, 0.3));
   margin-bottom: 5px;
   animation: logoCatGlow 4s ease-in-out infinite alternate;
 }
@@ -113,24 +121,25 @@ header h1 {
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: 5px;
-  color: var(--text-primary);
-  background: linear-gradient(to right, #f3e5ab, #d4af37, #f3e5ab);
+  color: var(--text-dark);
+  background: linear-gradient(to right, #4c2f96, #805cd4, #4c2f96);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
 }
 
 header .sub-title {
   font-size: 0.95rem;
   letter-spacing: 6px;
-  color: var(--gold-primary);
+  color: var(--text-dark-secondary);
+  font-weight: 600;
   text-transform: uppercase;
   margin-top: 5px;
   opacity: 0.9;
 }
 
 header .intro-desc {
-  color: var(--text-secondary);
+  color: var(--text-dark-secondary);
   font-size: 1.05rem;
   max-width: 600px;
   margin: 15px auto 0 auto;
@@ -138,8 +147,8 @@ header .intro-desc {
 }
 
 @keyframes logoCatGlow {
-  0% { filter: drop-shadow(0 0 5px var(--gold-glow)); }
-  100% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8)) rotate(5deg); }
+  0% { filter: drop-shadow(0 0 3px rgba(108, 92, 231, 0.3)); }
+  100% { filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.6)) rotate(5deg); }
 }
 
 /* --------------------------------------------------
@@ -158,7 +167,7 @@ main {
   text-align: center;
   font-family: var(--font-title);
   font-size: 1.8rem;
-  color: var(--gold-primary);
+  color: var(--text-dark);
   margin-bottom: 40px;
   letter-spacing: 3px;
   position: relative;
@@ -312,16 +321,17 @@ main {
 .mystical-prompt {
   text-align: center;
   font-size: 1.1rem;
-  color: var(--gold-primary);
+  color: var(--text-dark);
+  font-weight: 600;
   margin-bottom: 25px;
-  text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  text-shadow: 0 0 8px rgba(108, 92, 231, 0.2);
   letter-spacing: 1px;
   animation: promptPulse 2s ease-in-out infinite alternate;
 }
 
 @keyframes promptPulse {
-  0% { opacity: 0.8; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
-  100% { opacity: 1; text-shadow: 0 0 15px rgba(212, 175, 55, 0.8); }
+  0% { opacity: 0.8; text-shadow: 0 0 5px rgba(108, 92, 231, 0.15); }
+  100% { opacity: 1; text-shadow: 0 0 15px rgba(108, 92, 231, 0.4); }
 }
 
 .ritual-controls {
@@ -360,17 +370,18 @@ button {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
+  background: rgba(18, 14, 36, 0.08);
+  border: 1px solid rgba(108, 92, 231, 0.3);
+  color: var(--text-dark);
+  font-weight: 600;
   padding: 10px 22px;
 }
 
 .btn-secondary:hover {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--gold-primary);
-  color: var(--gold-primary);
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+  background: rgba(108, 92, 231, 0.12);
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+  box-shadow: 0 0 12px rgba(108, 92, 231, 0.2);
 }
 
 /* --------------------------------------------------
