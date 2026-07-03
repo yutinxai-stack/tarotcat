@@ -238,8 +238,7 @@ async function loadCardData() {
     });
     console.log(`成功載入 ${allCards.length} 張塔羅牌。`);
   } catch (error) {
-    console.error("載入塔羅資料失敗，使用內建備用資料：", error);
-    showNotification("系統警示", "無法從 detail.txt 讀取牌義，請確認檔案位置。");
+    console.warn("無法載入外部 detail.txt，已啟用內建備用牌意資料：", error);
   }
 }
 
