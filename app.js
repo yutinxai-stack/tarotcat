@@ -1233,6 +1233,12 @@ function initThemeSelector() {
 }
 
 function selectTheme(themeKey) {
+  if (!currentUser) {
+    showNotification("提示", "請先登入你的占卜帳戶以開始選擇寵物主題。");
+    openAuthModal();
+    return;
+  }
+
   currentTheme = themeKey;
 
   const logoIcon = document.getElementById("logo-icon");
