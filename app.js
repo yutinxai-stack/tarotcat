@@ -941,6 +941,7 @@ function updateAuthUI() {
   const themeSelector = document.getElementById("theme-selector-section");
 
   if (currentUser) {
+    document.body.classList.add("logged-in");
     welcomeText.innerHTML = `<i class="fa-solid fa-cat"></i> ${currentUser.username}`;
     btnShowLogin.classList.add("hidden");
     btnLogout.classList.remove("hidden");
@@ -962,6 +963,7 @@ function updateAuthUI() {
       themeSelector.classList.remove("hidden");
     }
   } else {
+    document.body.classList.remove("logged-in");
     welcomeText.innerHTML = `<i class="fa-solid fa-user-ninja"></i> 訪客`;
     btnShowLogin.classList.remove("hidden");
     btnGoAdmin.classList.add("hidden");

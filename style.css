@@ -1445,3 +1445,25 @@ body.dog-theme .orientation-badge.upright {
     margin-bottom: 20px;
   }
 }
+
+/* ==================================================
+   CSS 鋼鐵登入防線
+   ================================================== */
+/* 預設狀態 (body 沒有 .logged-in 類別) 下，強行關閉所有占卜功能，只露出歡迎登入頁 */
+body:not(.logged-in) #theme-selector-section,
+body:not(.logged-in) #spread-selector-section,
+body:not(.logged-in) #tabletop-section,
+body:not(.logged-in) header,
+body:not(.logged-in) #admin-panel-section {
+  display: none !important;
+}
+
+/* 預設狀態下，只顯示未登入歡迎頁 */
+body:not(.logged-in) #auth-landing-section {
+  display: flex !important;
+}
+
+/* 當已登入 (body 具有 .logged-in 類別) 下，強行隱藏未登入歡迎頁 */
+body.logged-in #auth-landing-section {
+  display: none !important;
+}
