@@ -23,7 +23,7 @@ let allCards = [
   { filename: "The_Devil_MeowsticTarot.png", name: "惡魔", upright: "束縛 慾望 物質主義 執著 誘惑 陰暗面 沉迷", reversed: "解脫 覺醒 擺脫束縛 面對陰暗 克服誘惑 精神重獲自由" },
   { filename: "The_Tower_MeowsticTarot.png", name: "高塔", upright: "劇變 崩毀 意外 幻滅 覺醒 突破 解放 震驚", reversed: "避免災難 延緩危機 重建期 害怕改變 餘波盪漾" },
   { filename: "The_Star_MeowsticTarot.png", name: "星星", upright: "希望 信心 靈感 療癒 寧靜 樂觀 前景光明 自然", reversed: "失望 失去信心 靈感枯竭 焦慮 悲觀 缺乏方向" },
-  { filename: "The_Moon_MeowsticTarot.png", name: "月亮", upright: "不安 恐懼 幻覺 潛意識 欺騙 直覺 混亂 秘密", reversed: "消除恐懼 誤會冰釋 真相大白 直覺復甦 擺擺脫陰影" },
+  { filename: "The_Moon_MeowsticTarot.png", name: "月亮", upright: "不安 恐懼 幻覺 潛意識 欺騙 直覺 混亂 秘密", reversed: "消除恐懼 誤會冰釋 真相大白 直覺復甦 擺脫陰影" },
   { filename: "The_Sun_MeowsticTarot.png", name: "太陽", upright: "喜悅 成功 活力 溫暖 自信 明朗 榮耀 真理", reversed: "暫時受挫 缺乏活力 虛榮 驕傲過度 延遲的成功" },
   { filename: "Judgement_MeowsticTarot.png", name: "審判", upright: "覺醒 呼喚 決定 業力 評估 解放 新生 自省", reversed: "逃避呼喚 自我懷疑 遲疑決策 悔恨 拒絕反省" },
   { filename: "The_World_MeowsticTarot.png", name: "世界", upright: "完成 圓滿 旅行 統合 成功 自由 達成目標 終點", reversed: "未完成 延遲 挫折 缺乏進展 完美主義 停滯不前" },
@@ -73,7 +73,7 @@ let allCards = [
   { filename: "10_of_Swords_MeowsticTarot.png", name: "寶劍十", upright: "谷底 結束 毀滅 失敗 背叛 解脫 新生的起點", reversed: "置之死地而後生 掙扎 延遲的結束 復原期 害怕失敗" },
   { filename: "Page_of_Swords_MeowsticTarot.png", name: "寶劍侍從", upright: "警惕 好奇 訊息 敏銳 學習 理智 收集情報 溝通", reversed: "八卦 懷疑 敵意 缺乏準備 虛張聲勢 幼稚言行" },
   { filename: "Knight_of_Swords_MeowsticTarot.png", name: "寶劍騎士", upright: "急躁 理智 衝刺 衝突 勇往直前 挑戰 銳不可擋", reversed: "魯莽 橫衝直撞 衝突加劇 計劃失敗 脾氣暴躁 散漫" },
-  { filename: "Queen_of_Swords_MeowsticTarot.png", name: "寶劍皇后", upright: "理智 獨立 誠實 敏銳 判斷力 邊界感 冷靜 智慧", reversed: "冷酷 刻刻薄 偏見 情緒化 過度批判 孤立自我" },
+  { filename: "Queen_of_Swords_MeowsticTarot.png", name: "寶劍皇后", upright: "理智 獨立 誠實 敏銳 判斷力 邊界感 冷靜 智慧", reversed: "冷酷 刻薄 偏見 情緒化 過度批判 孤立自我" },
   { filename: "King_of_Swords_MeowsticTarot.png", name: "寶劍國王", upright: "權威 理性 智識 秩序 專業 法律 公正 決斷力", reversed: "專制 傲慢 濫用權力 殘忍 偏見 缺乏同理心" },
 
   // 金幣花色 (14張)
